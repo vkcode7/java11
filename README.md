@@ -1,5 +1,7 @@
 # java11
 
+## WORKING WITH JAVA DATA TYPES
+
 ## Primitive Types in Java
 ```java
 public class PrimitiveTypesExample {
@@ -164,6 +166,8 @@ public class DurationExample {
 }
 ```
 
+## PROGRAM FLOW
+
 ### For...Each
 Syntax:
 ```java
@@ -208,4 +212,140 @@ public class ForEachMapExample {
 }
 ```
 
+## OOPS
 
+### Package
+In Java, the package keyword is used to define a namespace for organizing related classes and interfaces. It helps group similar types of classes together to avoid name conflicts, improve code readability, and manage the project structure more effectively.
+
+```java
+package com.example.utilities;
+
+public class MathUtils {
+    public static int add(int a, int b) {
+        return a + b;
+    }
+}
+```
+
+The above class is part of the com.example.utilities package.<br>
+The folder structure for the package would be:
+```bash
+com/example/utilities/MathUtils.java
+```
+
+- Importing a specific class: import com.example.utilities.MathUtils;
+- Importing All Classes from a Package: import com.example.utilities.*;
+
+Important Notes:
+- The directory structure of the project must match the package structure.
+- If no package statement is specified, the class is part of the default package, which is discouraged for large projects.
+- The package declaration must be the first statement (excluding comments) in a Java file:
+
+### Constructors/Destructors
+In Java, you can define constructors to initialize objects when they are created. However, destructors do not exist in Java like they do in languages such as C++. Instead, Java uses the finalize() method (deprecated as of Java 9 and removed in Java 18) and garbage collection to clean up resources.
+
+#### Modern Alternative to finalize(): Using AutoCloseable
+If the class deals with resources, you can implement the AutoCloseable interface for automatic cleanup.
+
+```java
+public class Example implements AutoCloseable {
+    private String name;
+
+    // Constructor
+    public Example(String name) {
+        this.name = name;
+        System.out.println("Constructor called: Object created for " + name);
+    }
+
+    // Overriding close() for cleanup
+    @Override
+    public void close() {
+        System.out.println("Close called: Resources released for " + name);
+    }
+
+    public static void main(String[] args) {
+        try (Example obj = new Example("Sample1")) {
+            System.out.println("Using the object...");
+        } // close() is automatically called here
+    }
+}
+```
+
+output:
+```sql
+Constructor called: Object created for Sample1
+Using the object...
+Close called: Resources released for Sample1
+```
+
+The try-with-resources construct introduced in Java 7 is a safer and more deterministic way to manage resources.<br>
+Implementing the AutoCloseable or Closeable interfaces allows resources to be explicitly cleaned up, ensuring better control.
+
+Example:
+```java
+try (FileInputStream fis = new FileInputStream("example.txt")) {
+    // Use the resource
+} // The file input stream is automatically closed here
+```
+ 
+### this()
+In Java, this() is used to call another constructor of the same class from within a constructor. This is known as constructor chaining and is useful when multiple constructors need to initialize the object with different levels of detail while reusing the initialization logic.
+
+Key Rules for Using this():
+- Must Be the First Statement: The call to this() must appear as the first statement in the constructor; otherwise, a compilation error occurs.
+- Cannot Create Loops: Constructor chaining cannot form a circular chain, i.e., one constructor calling itself directly or indirectly.
+
+```java
+public class Employee {
+    private String name;
+    private int age;
+    private String department;
+
+    // Constructor 1: Default values
+    public Employee() {
+        this("Unknown", 0, "General"); // Calls Constructor 3
+        System.out.println("Default constructor called");
+    }
+
+    // Constructor 2: Two parameters
+    public Employee(String name, int age) {
+        this(name, age, "General"); // Calls Constructor 3
+        System.out.println("Two-parameter constructor called");
+    }
+
+    // Constructor 3: All parameters
+    public Employee(String name, int age, String department) {
+        this.name = name;
+        this.age = age;
+        this.department = department;
+        System.out.println("Three-parameter constructor called");
+    }
+
+    public void display() {
+        System.out.println("Name: " + name + ", Age: " + age + ", Department: " + department);
+    }
+
+    public static void main(String[] args) {
+        Employee emp1 = new Employee();
+        emp1.display();
+
+        Employee emp2 = new Employee("Alice", 30);
+        emp2.display();
+
+        Employee emp3 = new Employee("Bob", 35, "IT");
+        emp3.display();
+    }
+}
+```
+
+Output:
+```sql
+Three-parameter constructor called
+Default constructor called
+Name: Unknown, Age: 0, Department: General
+Three-parameter constructor called
+Two-parameter constructor called
+Name: Alice, Age: 30, Department: General
+Three-parameter constructor called
+Name: Bob, Age: 35, Department: IT
+```
