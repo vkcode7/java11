@@ -408,10 +408,7 @@ At the nested class level, private and protected access modifiers control how th
 <img width="728" alt="image" src="https://github.com/user-attachments/assets/6e329554-26d2-4f1f-928d-e7efa4db35df">
 
 ### Access Level Table for members:
-<img width="838" alt="image" src="https://github.com/user-attachments/assets/44e08f29-9fc3-4c47-b242-fd3c7eb3a853">
-
 <img width="729" alt="image" src="https://github.com/user-attachments/assets/9209a8c3-7cd4-407e-88e0-f986e3a00149">
-
 
 ### inheritance - extends
 super() is used to call base class ctor
@@ -483,3 +480,280 @@ class SubClassC extends SealedClass {  // Compile-time error: Cannot extend seal
     // Error: Cannot extend from a sealed class that doesn't permit this class
 }
 ```
+
+Note: Java, a class cannot extend more than one class. This is due to Java's single inheritance model for classes. A class can only inherit from one superclass. This design decision helps avoid complexities like the Diamond Problem, where a subclass might inherit conflicting behaviors from multiple parent classes. Use interfaces for multiple inheritance.
+
+### Interfaces
+In Java, an interface is a reference type, similar to a class, that can contain only abstract methods, default methods, static methods, and constants (fields). Interfaces define a contract for what a class can do, without specifying how it does it.
+
+```java
+interface MyInterface {
+    // Constant declaration
+    int MAX_VALUE = 100;
+
+    // Abstract method (without body)
+    void abstractMethod();
+
+    // Default method (with body)
+    default void defaultMethod() {
+        System.out.println("This is a default method.");
+    }
+
+    // Static method (with body)
+    static void staticMethod() {
+        System.out.println("This is a static method in the interface.");
+    }
+}
+```
+
+#### Multiple inheritance using interfaces:
+```java
+interface Animal {
+    void sound();
+}
+
+interface Mammal {
+    void feed();
+}
+
+class Dog implements Animal, Mammal {
+    @Override
+    public void sound() {
+        System.out.println("Bark");
+    }
+
+    @Override
+    public void feed() {
+        System.out.println("Feeding the dog.");
+    }
+}
+```
+
+#### Interface Inheritance: 
+An interface can extend another interface. The implementing class must then implement all methods from both interfaces.
+
+```java
+interface Animal {
+    void sound();
+}
+
+interface Mammal extends Animal {
+    void feed();
+}
+```
+
+#### Functional interface
+A functional interface in Java is an interface that has exactly one abstract method. These interfaces can have multiple default methods and static methods, but they can only have one abstract method. Functional interfaces are primarily used as the basis for lambda expressions and method references, enabling a functional programming style in Java.
+
+Key Characteristics of Functional Interfaces:
+Exactly One Abstract Method:
+
+A functional interface must contain only one abstract method.
+It can contain multiple default methods or static methods, but the key requirement is that there must be only one abstract method.
+Used with Lambda Expressions:
+
+Functional interfaces are often used with lambda expressions to provide the implementation of the abstract method in a concise way.
+@FunctionalInterface Annotation (Optional but recommended):
+
+Java 8 introduced the @FunctionalInterface annotation, which is not required but provides compile-time checking to ensure that the interface is indeed a functional interface. It will throw an error if the interface has more than one abstract method.
+
+<strong>Syntax of a Functional Interface:</strong>
+```java
+@FunctionalInterface
+interface MyFunctionalInterface {
+    // Abstract method (must be implemented by the class or lambda expression)
+    void myMethod();
+
+    // Default method (can be provided with implementation)
+    default void defaultMethod() {
+        System.out.println("This is a default method.");
+    }
+
+    // Static method (can be provided with implementation)
+    static void staticMethod() {
+        System.out.println("This is a static method.");
+    }
+}
+```
+
+<strong>Example of a Functional Interface with Lambda Expression:</strong>
+```java
+@FunctionalInterface
+interface Greeting {
+    void sayHello(String name); // Abstract method
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Lambda expression providing implementation for the sayHello method
+        Greeting greeting = (name) -> System.out.println("Hello, " + name);
+
+        // Call the method
+        greeting.sayHello("Alice");
+    }
+}
+
+Output:
+Hello, Alice
+```
+
+<strong>Functional Interface and Lambda Expressions:</strong>
+Functional interfaces are closely tied to lambda expressions. The lambda expression provides a concise way to implement the abstract method of a functional interface.
+
+<strong>Example using a functional interface with a lambda expression:</strong>
+
+```java
+@FunctionalInterface
+interface MathOperation {
+    int operate(int a, int b); // Abstract method for operation
+}
+
+public class Calculator {
+    public static void main(String[] args) {
+        // Lambda expression for addition operation
+        MathOperation add = (a, b) -> a + b;
+        System.out.println("Addition: " + add.operate(5, 3)); // Output: 8
+
+        // Lambda expression for subtraction operation
+        MathOperation subtract = (a, b) -> a - b;
+        System.out.println("Subtraction: " + subtract.operate(5, 3)); // Output: 2
+    }
+}
+Output:
+Addition: 8
+Subtraction: 2
+```
+
+#### Common Built-in Functional Interfaces in Java:
+Java 8 introduced several functional interfaces in the java.util.function package, which are commonly used with lambda expressions:
+
+#### Predicate<T>:
+- Represents a function that takes an argument and returns a boolean.
+- Used for filtering or matching.
+```java
+Predicate<Integer> isEven = (n) -> n % 2 == 0;
+System.out.println(isEven.test(4)); // Output: true
+```
+
+#### Function<T, R>:
+Represents a function that takes an argument of type T and returns a result of type R.
+```java
+Function<Integer, Integer> square = (n) -> n * n;
+System.out.println(square.apply(5)); // Output: 25
+```
+
+#### Consumer<T>:
+Represents a function that takes an argument of type T and returns void. It is used for performing actions.
+```java
+Consumer<String> print = (str) -> System.out.println(str);
+print.accept("Hello, World!"); // Output: Hello, World!
+```
+
+#### Supplier<T>:
+Represents a function that takes no arguments and returns a result of type T.
+```java
+Copy code
+Supplier<Double> randomValue = () -> Math.random();
+System.out.println(randomValue.get()); // Output: Random double value
+```
+
+#### BiFunction<T, U, R>:
+Represents a function that takes two arguments of types T and U, and returns a result of type R.
+```java
+BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
+System.out.println(add.apply(2, 3)); // Output: 5
+```
+
+### Enums 
+#### Key Characteristics of Enums in Java:
+- Enum Constants: The values defined in the enum type.
+- Type Safety: Enums provide compile-time checking, ensuring that only valid constants are used.
+- Can Have Fields and Methods: Enums can have fields, methods, and constructors.
+- Extends java.lang.Enum: Every enum type implicitly extends java.lang.Enum, which provides common methods like ordinal(), values(), and valueOf().
+
+```java
+enum Day {
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Day today = Day.MONDAY;  // Assigning an enum value to a variable
+        System.out.println("Today is: " + today);  // Output: Today is: MONDAY
+    }
+}
+```
+
+Enums with field and methods
+```java
+enum Day {
+    SUNDAY("Relaxing"), MONDAY("Busy"), TUESDAY("Productive"),
+    WEDNESDAY("Mid-week"), THURSDAY("Busy"), FRIDAY("Excited"), SATURDAY("Fun");
+
+    private String description;
+
+    // Constructor for enum
+    Day(String description) {
+        this.description = description;
+    }
+
+    // Method to get description
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return "Day: " + this.name();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Accessing enum with methods
+        Day today = Day.MONDAY;
+        System.out.println(today + ": " + today.getDescription());
+        System.out.println(Day.MONDAY);  // Output: Day: MONDAY
+    }
+}
+
+Output:
+MONDAY: Busy
+Day: MONDAY
+```
+
+Enum Methods: Enums can have useful methods such as ordinal(), valueOf(), and values():
+- ordinal(): Returns the position of the constant in the enum (0-based index). - Day.MONDAY.ordinal()
+- valueOf(): Returns the enum constant for a string value.
+- values(): Returns an array of all the enum constants.
+```java
+    public static void main(String[] args) {
+        // Using ordinal() method
+        System.out.println("Ordinal of MONDAY: " + Day.MONDAY.ordinal());  // Output: 1
+
+        // Using values() method
+        for (Day day : Day.values()) {
+            System.out.println(day);  // Outputs all the days
+        }
+
+        // Using valueOf() method
+        Day day = Day.valueOf("FRIDAY");
+        System.out.println("The day is: " + day);  // Output: The day is: FRIDAY
+    }
+```
+Output:
+```yaml
+Ordinal of MONDAY: 1
+SUNDAY
+MONDAY
+TUESDAY
+WEDNESDAY
+THURSDAY
+FRIDAY
+SATURDAY
+The day is: FRIDAY
+```
+
+
+
+
