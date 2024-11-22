@@ -1,4 +1,4 @@
-# java11
+# Java SE 11 Developer Certification (1Z0-819)
 
 ## WORKING WITH JAVA DATA TYPES
 
@@ -950,3 +950,111 @@ Resource closed!
 
 ## STREAMS and LAMBDA Exp
 
+### Lambda Expression Syntax
+
+(parameters) -> expression
+(parameter1, parameter2) -> expression
+() -> expression
+(parameters) -> {
+    // multiple statements
+}
+
+
+```java
+
+//(parameters) -> expression
+// A lambda expression that takes one argument and returns its square
+Function<Integer, Integer> square = (x) -> x * x;
+System.out.println(square.apply(5));  // Output: 25
+
+// A lambda expression where type is inferred from the context
+Function<Integer, Integer> square = x -> x * x;
+System.out.println(square.apply(5));  // Output: 25
+
+//(parameter1, parameter2) -> expression
+// A lambda expression that adds two integers
+BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
+System.out.println(add.apply(5, 3));  // Output: 8
+
+//() -> expression
+// A lambda expression that returns a constant value
+Supplier<String> getHello = () -> "Hello, World!";
+System.out.println(getHello.get());  // Output: Hello, World!
+
+/*
+(parameters) -> {
+    // multiple statements
+}
+*/
+// A lambda expression that checks if a number is even
+Predicate<Integer> isEven = (n) -> {
+    if (n % 2 == 0) {
+        return true;
+    } else {
+        return false;
+    }
+};
+System.out.println(isEven.test(4));  // Output: true
+```
+
+### Lambda Expressions with Functional Interfaces
+A functional interface is an interface that has exactly one abstract method. Lambda expressions are often used to provide the implementation of the abstract method of a functional interface.
+
+**Common Functional Interfaces in Java:**
+```java
+//1. Runnable: A functional interface with no parameters and no return value.
+Runnable r = () -> System.out.println("Running...");
+r.run();  // Output: Running...
+
+//2. Predicate<T>: A functional interface that takes a single argument and returns a boolean value.
+Predicate<Integer> isEven = x -> x % 2 == 0;
+System.out.println(isEven.test(4));  // Output: true
+
+//3. Function<T, R>: A functional interface that takes one argument and produces a result.
+Function<String, Integer> length = s -> s.length();
+System.out.println(length.apply("Hello"));  // Output: 5
+
+//4. Consumer<T>: A functional interface that takes one argument and performs an action without returning any result.
+Consumer<String> print = s -> System.out.println(s);
+print.accept("Hello");  // Output: Hello
+
+//5. Supplier<T>: A functional interface that supplies a value without taking any arguments.
+Supplier<Double> random = () -> Math.random();
+System.out.println(random.get());
+
+//6. BiFunction<T, U, R>: A functional interface that takes two arguments and produces a result.
+BiFunction<Integer, Integer, Integer> multiply = (a, b) -> a * b;
+System.out.println(multiply.apply(2, 3));  // Output: 6
+```
+
+### Example Usage in Java Collections
+Lambda expressions are commonly used with Java's Streams API and Collections.
+
+Example: Using forEach with a List
+```java
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList("Apple", "Banana", "Cherry");
+
+        // Using forEach with a lambda expression
+        list.forEach(item -> System.out.println(item));
+    }
+}
+```
+
+Example: Sorting a List with a Lambda Expression
+```java
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        List<String> list = Arrays.asList("Banana", "Apple", "Cherry");
+
+        // Sorting a list using a lambda expression
+        Collections.sort(list, (a, b) -> a.compareTo(b));
+        System.out.println(list);  // Output: [Apple, Banana, Cherry]
+    }
+}
+```
