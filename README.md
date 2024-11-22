@@ -349,3 +349,137 @@ Name: Alice, Age: 30, Department: General
 Three-parameter constructor called
 Name: Bob, Age: 35, Department: IT
 ```
+
+### static
+Here’s an example of a Java class demonstrating a static field, a static method, and a static nested class:
+
+```java
+public class StaticDemo {
+
+    // Static field
+    private static int count = 0;
+
+    // Static method
+    public static void incrementCount() {
+        count++;
+    }
+
+    public static int getCount() {
+        return count;
+    }
+
+    // Static nested class
+    public static class Nested {
+        public void displayMessage() {
+            System.out.println("Hello from the static nested class!");
+        }
+
+        public void displayCount() {
+            System.out.println("Current count (from static nested class): " + StaticDemo.getCount());
+        }
+    }
+
+    public static void main(String[] args) {
+        // Access static field and method
+        System.out.println("Initial count: " + StaticDemo.getCount());
+        StaticDemo.incrementCount();
+        StaticDemo.incrementCount();
+        System.out.println("Updated count: " + StaticDemo.getCount());
+
+        // Access static nested class
+        StaticDemo.Nested nested = new StaticDemo.Nested();
+        nested.displayMessage();
+        nested.displayCount();
+    }
+}
+```
+### Access Levels for class
+In Java, access modifiers at the class level determine the visibility and accessibility of a class to other classes or packages. 
+
+There are two valid access modifiers for top-level classes:
+- public - accessible from anywhere in the application, provided it is in the classpath
+- default (no access modifier is specified) - only within the same package
+
+For nested classes, all four access modifiers (public, private, protected, and default`) can be used.
+
+
+At the nested class level, private and protected access modifiers control how the nested class interacts with its enclosing class and the rest of the code. Here's how they work:
+
+<img width="728" alt="image" src="https://github.com/user-attachments/assets/6e329554-26d2-4f1f-928d-e7efa4db35df">
+
+### Access Level Table for members:
+<img width="838" alt="image" src="https://github.com/user-attachments/assets/44e08f29-9fc3-4c47-b242-fd3c7eb3a853">
+
+<img width="729" alt="image" src="https://github.com/user-attachments/assets/9209a8c3-7cd4-407e-88e0-f986e3a00149">
+
+
+### inheritance - extends
+super() is used to call base class ctor
+
+```java
+// Base class (Parent)
+class Animal {
+    private String name;
+
+    // Base class constructor
+    public Animal(String name) {
+        this.name = name;
+        System.out.println("Animal constructor called: " + name);
+    }
+
+    // Method in the base class
+    public void display() {
+        System.out.println("I am an Animal. My name is: " + name);
+    }
+}
+
+// Derived class (Child)
+class Dog extends Animal {
+    private String breed;
+
+    // Derived class constructor
+    public Dog(String name, String breed) {
+        super(name); // Call to base class constructor
+        this.breed = breed;
+        System.out.println("Dog constructor called. Breed: " + breed);
+    }
+
+    // Method in the derived class
+    public void bark() {
+        System.out.println("Woof! I am a " + breed);
+    }
+}
+
+// Main class
+public class Main {
+    public static void main(String[] args) {
+        Dog dog = new Dog("Buddy", "Golden Retriever");
+        dog.display(); // Method from the base class
+        dog.bark();    // Method from the derived class
+    }
+}
+```
+
+### Summary of class specifiers
+<img width="736" alt="image" src="https://github.com/user-attachments/assets/f1a8c58b-92da-4ba5-a50c-22a38dcd73c0">
+
+#### sealed vs final:
+Key Differences:
+- final: Prevents any subclassing at all.
+- sealed: Allows subclassing, but only by specific classes you define (using permits), providing more controlled flexibility than final.
+
+```java
+public sealed class SealedClass permits SubClassA, SubClassB {
+    // Only SubClassA and SubClassB can extend SealedClass
+}
+
+class SubClassA extends SealedClass { // Valid
+}
+
+class SubClassB extends SealedClass { // Valid
+}
+
+class SubClassC extends SealedClass {  // Compile-time error: Cannot extend sealed class 'SealedClass'
+    // Error: Cannot extend from a sealed class that doesn't permit this class
+}
+```
