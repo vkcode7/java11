@@ -754,6 +754,199 @@ SATURDAY
 The day is: FRIDAY
 ```
 
+#### Enum with Interfaces:
+An enum can implement interfaces as well. This is useful when you want to add common behavior to all constants of the enum.
+
+```java
+interface Describable {
+    String getDescription();
+}
+
+enum Day implements Describable {
+    SUNDAY("Relaxing"), MONDAY("Busy"), TUESDAY("Productive");
+
+    private String description;
+
+    Day(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println(Day.SUNDAY.getDescription());  // Output: Relaxing
+    }
+}
+
+Output:
+Relaxing
+```
+
+#### Local classes: a class defined within a method or a block of code.
+```java
+class OuterClass {
+    void someMethod() {
+        // Local class defined inside the method
+        class LocalClass {
+            void display() {
+                System.out.println("Hello from Local Class!");
+            }
+        }
+
+        LocalClass localClass = new LocalClass();  // Creating an instance of the local class
+        localClass.display();  // Output: Hello from Local Class!
+    }
+}
+```
+
+<strong>Anonymous Local Class:</strong>
+Local classes can also be anonymous (without a name), often used when the class is only needed for a short, one-time use, like implementing an interface or extending a class in a method.
+
+```java
+class Outer {
+    void outerMethod() {
+        // Anonymous inner class (local class without a name)
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Running in the anonymous local class!");
+            }
+        };
+
+        r.run();  // Output: Running in the anonymous local class!
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Outer outer = new Outer();
+        outer.outerMethod();
+    }
+}
+```
+
+## EXCEPTIONS
+### Java Exception Keywords:
+- try: Defines a block of code that will be tested for exceptions.
+- catch: Defines a block of code to handle a specific exception.
+- finally: Defines a block of code that will execute after the try block, regardless of whether an exception occurred.
+- throw: Used to explicitly throw an exception. - throw new IllegalArgumentException("Age must be at least 18.");
+- throws: Declares that a method may throw an exception. public void methodName() throws ExceptionType {...}
+  
+```java
+public class Main {
+    public static void main(String[] args) {
+        try {
+            String str = null;
+            int length = str.length();  // NullPointerException
+        } catch (NullPointerException e) {
+            System.out.println("Null Pointer Exception occurred.");
+        } catch (Exception e) {
+            System.out.println("An unknown exception occurred.");
+        } finally {
+            // Cleanup code
+        }
+    }
+}
+```
 
 
+### Types of Common Exceptions:
+**Checked Exceptions:** These are exceptions that are checked at compile-time. 
+- IOException
+- SQLException
+- ClassNotFoundException
+- FileNotFoundException
+
+**Unchecked Exceptions:** These are runtime exceptions
+- NullPointerException
+- ArrayIndexOutOfBoundsException
+- ArithmeticException
+- IllegalArgumentException
+
+### Custom Exceptions
+You can define your own exception classes by extending the Exception class or RuntimeException class. These custom exceptions can provide more meaningful error handling specific to your application.
+
+Example:
+```java
+class InvalidAgeException extends Exception {
+    public InvalidAgeException(String message) {
+        super(message);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            validateAge(15);
+        } catch (InvalidAgeException e) {
+            System.out.println("Caught: " + e.getMessage());
+        }
+    }
+
+    static void validateAge(int age) throws InvalidAgeException {
+        if (age < 18) {
+            throw new InvalidAgeException("Age must be at least 18.");
+        }
+    }
+}
+```
+
+### try-with-resources
+In Java, try-with-resources is a feature introduced in Java 7 to simplify the management of resources that need to be closed after use (e.g., files, sockets, database connections). It ensures that resources are closed automatically at the end of the try block, even if an exception is thrown, preventing resource leaks and improving code safety.
+
+The try-with-resources statement is used with resources that implement the AutoCloseable interface (or its more specific subclass java.io.Closeable). Classes like FileInputStream, BufferedReader, Connection, etc., implement this interface and can be used in a try-with-resources block.
+
+```java
+try (ResourceType1 resource1 = new ResourceType1();
+     ResourceType2 resource2 = new ResourceType2()) {
+    // Use the resources
+} catch (ExceptionType e) {
+    // Handle exception
+}
+```
+
+**Example: Custom Resource (Implementing AutoCloseable)**
+You can create your own custom resource class that implements the AutoCloseable interface.
+
+```java
+class MyResource implements AutoCloseable {
+    public MyResource() {
+        System.out.println("Resource created!");
+    }
+
+    public void doSomething() {
+        System.out.println("Doing something with the resource...");
+    }
+
+    @Override
+    public void close() {
+        System.out.println("Resource closed!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        try (MyResource resource = new MyResource()) {
+            resource.doSomething();
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+    }
+}
+```
+
+Output:
+```csharp
+Resource created!
+Doing something with the resource...
+Resource closed!
+```
+
+## STREAMS and LAMBDA Exp
 
