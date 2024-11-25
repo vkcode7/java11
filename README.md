@@ -998,7 +998,13 @@ System.out.println(isEven.test(4));  // Output: true
 ```
 
 ### Lambda Expressions with Functional Interfaces
-A functional interface is an interface that has exactly one abstract method. Lambda expressions are often used to provide the implementation of the abstract method of a functional interface.
+A functional interface is an interface that has exactly one **abstract** method. It can have other non abstract methods though. Lambda expressions are often used to provide the implementation of the abstract method of a functional interface.
+```java
+@FunctionalInterface //<== This annotation is necessary but if applied, compiler will ensure that only 1 abstract method is there
+interface Runnable {
+    void run();
+}
+```
 
 **Common Functional Interfaces in Java:**
 ```java
@@ -1010,7 +1016,7 @@ r.run();  // Output: Running...
 Predicate<Integer> isEven = x -> x % 2 == 0;
 System.out.println(isEven.test(4));  // Output: true
 
-//3. Function<T, R>: A functional interface that takes one argument and produces a result.
+//3. Function<T, R>: A functional interface that takes one argument of type T and produces a result of type R.
 Function<String, Integer> length = s -> s.length();
 System.out.println(length.apply("Hello"));  // Output: 5
 
@@ -1026,6 +1032,17 @@ System.out.println(random.get());
 BiFunction<Integer, Integer, Integer> multiply = (a, b) -> a * b;
 System.out.println(multiply.apply(2, 3));  // Output: 6
 ```
+
+Points to remembers:
+- Function<T,R> one input and one output
+- Consumer<T>: one input and no output
+- Supplier<R>: No input but one output
+- Predicate<T>: one input and boolean output
+- BiFunction<T,U,R>: 2 inputs, one output
+- BiConsumer<T,U>: 2 inputs and no output
+- BiPredicaate<T,U>: 2 inputs and one bollean output
+- BInaryOPerator<T>: 2 inputs of type T and output of type T
+
 
 ### Example Usage in Java Collections
 Lambda expressions are commonly used with Java's Streams API and Collections.
@@ -1058,3 +1075,358 @@ public class Main {
     }
 }
 ```
+Example: Predicate
+```java
+@FunctionalInterface
+public interface Predicate<T> {
+    boolean test(T t);
+}
+```
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+public class PredicateExample {
+    public static void main(String[] args) {
+        // List of numbers
+        List<Integer> numbers = Arrays.asList(10, 15, 20, 25, 30);
+
+        // Predicate to check if a number is even
+        Predicate<Integer> isEven = n -> n % 2 == 0;
+
+        // Filter numbers using the predicate
+        List<Integer> evenNumbers = numbers.stream()
+                                           .filter(isEven)
+                                           .collect(Collectors.toList());
+
+        System.out.println("Even numbers: " + evenNumbers); // Output: [10, 20, 30]
+    }
+}
+```
+
+### Streams:
+In Java, streams are a part of the Stream API introduced in Java 8, which provides a functional programming approach to process sequences of data. Streams allow operations on collections (like List, Set, Map, etc.) in a declarative, pipeline-based manner.
+
+Key Features of Streams:
+- Declarative Style: Use functional-style operations (e.g., map, filter) instead of imperative loops.
+- Lazy Evaluation: Intermediate operations (e.g., filter, map) are only executed when a terminal operation (e.g., collect, forEach) is invoked.
+- Parallel Processing: Streams can be easily processed in parallel for performance optimization.
+- Immutable: Streams do not modify the original data source.
+
+#### Stream Pipeline:
+A stream pipeline consists of three main parts:
+
+- Source: A data source such as a collection, array, or I/O channel.
+- Intermediate Operations: Transformations applied to the stream (e.g., filter, map, sorted).
+- Terminal Operations: The final operation that produces a result or a side effect (e.g., collect, forEach).
+
+Example 1: Filter and Map
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class StreamExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alice", "Bob", "Charlie", "David");
+
+        // Stream to filter names starting with 'A' and convert to uppercase
+        List<String> filteredNames = names.stream()
+                                          .filter(name -> name.startsWith("A")) // Intermediate operation
+                                          .map(String::toUpperCase)             // Intermediate operation
+                                          .collect(Collectors.toList());        // Terminal operation
+
+        System.out.println(filteredNames); // Output: [ALICE]
+    }
+}
+```
+
+Example 2: Reduce: The reduce operation aggregates stream elements into a single value.
+```java
+import java.util.Arrays;
+import java.util.List;
+
+public class StreamReduceExample {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+
+        // Sum of all numbers
+        int sum = numbers.stream()
+                         .reduce(0, Integer::sum); // Identity = 0, BinaryOperator = Integer::sum
+
+        System.out.println("Sum: " + sum); // Output: Sum: 15
+    }
+}
+```
+
+Example 3: Parallel Streams: Streams can be processed in parallel for better performance on large datasets.
+```java
+import java.util.stream.IntStream;
+
+public class ParallelStreamExample {
+    public static void main(String[] args) {
+        // Sum of numbers from 1 to 1,000,000 using parallel stream
+        long sum = IntStream.rangeClosed(1, 1_000_000)
+                            .parallel()
+                            .sum();
+
+        System.out.println("Sum: " + sum); // Output: Sum: 500000500000
+    }
+}
+```
+
+Advantages of Streams:
+- Readable Code: Streams provide a concise and readable way to process data.
+- Parallelism: Easily process data in parallel to utilize multi-core systems.
+- Less Boilerplate: Avoid writing explicit loops and conditionals.
+
+![image](https://github.com/user-attachments/assets/69457990-4942-47a8-bc9c-bf13ea83053c)
+
+
+### The Stream class
+The Stream class in Java is part of the java.util.stream package and represents a sequence of elements supporting functional-style operations. It is a central component of the Stream API
+
+Stream Creation:
+```java
+//From Collections:
+List<Integer> list = Arrays.asList(1, 2, 3, 4);
+Stream<Integer> stream = list.stream();
+
+//From Arrays:
+String[] array = {"a", "b", "c"};
+Stream<String> stream = Arrays.stream(array);
+
+//From Static Methods:
+Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5);
+Stream<String> infiniteStream = Stream.generate(() -> "Hello").limit(10);
+
+//From Files (Java NIO):
+Stream<String> lines = Files.lines(Paths.get("file.txt"));
+```
+
+![image](https://github.com/user-attachments/assets/86fc342b-76b9-4e67-8981-da91c1803ee7)
+
+**Terminal Operations:** These operations trigger the computation of the stream pipeline and produce a result or a side effect.
+
+- collect(Collector<T, A, R>): Collects elements into a collection (e.g., List, Set).
+- forEach(Consumer<T>): Performs an action for each element.
+- reduce(BinaryOperator<T>): Reduces elements into a single result.
+- count(): Counts the elements.
+- findFirst(): Returns the first element.
+- findAny(): Returns any element (useful for parallel streams).
+- allMatch, anyMatch, noneMatch: Tests whether elements match a given predicate.
+
+Example:
+```java
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+int sum = numbers.stream()
+                 .reduce(0, Integer::sum); // Sum all numbers
+System.out.println("Sum: " + sum); // Output: Sum: 15
+```
+
+## THREADS
+In Java, there are several ways to create and manage threads. 
+#### 1. By Extending the Thread Class
+The simplest way to create a thread is by extending the Thread class and overriding its run() method. The run() method contains the code that will be executed when the thread starts.
+
+Example:
+```java
+class MyThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println("Thread is running");
+    }
+}
+
+public class ThreadExample {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        t1.start();  // Start the thread
+    }
+}
+```
+start() initiates the thread and invokes the run() method.
+
+#### 2. By Implementing the Runnable Interface
+Another way to create a thread is by implementing the Runnable interface. This approach is preferred over extending the Thread class because it allows you to extend other classes as well (since Java supports single inheritance). The run() method is implemented in the Runnable interface, and an instance of Runnable is passed to a Thread object.
+
+Example:
+```java
+class MyRunnable implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("Runnable thread is running");
+    }
+}
+
+public class ThreadExample {
+    public static void main(String[] args) {
+        MyRunnable runnable = new MyRunnable();
+        Thread t1 = new Thread(runnable);  // Create thread using Runnable
+        t1.start();  // Start the thread
+    }
+}
+```
+
+#### 3. Using ExecutorService (Thread Pool)
+For better thread management, especially when dealing with multiple threads, you can use an ExecutorService. This is part of the java.util.concurrent package and provides thread pooling, which helps manage a pool of worker threads for executing tasks. ExecutorService also handles thread creation, scheduling, and shutdown.
+
+Example (Using ExecutorService):
+```java
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class ExecutorServiceExample {
+    public static void main(String[] args) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);  // Creates a thread pool with 2 threads
+
+        Runnable task = () -> System.out.println("Thread from ExecutorService is running");
+        executor.submit(task);  // Submit the task to be executed
+
+        executor.shutdown();  // Shut down the executor
+    }
+}
+```
+
+- Executors.newFixedThreadPool(int n): Creates a pool of n threads.
+- executor.submit(task): Submits a task for execution by a thread from the pool.
+- executor.shutdown(): Initiates an orderly shutdown of the executor.
+
+#### 4. Using Callable and Future
+Similar to Runnable, but Callable can return a result or throw an exception. You can submit Callable tasks to an ExecutorService and retrieve their result using a Future object.
+
+Example (Using Callable):
+```java
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class CallableExample {
+    public static void main(String[] args) throws Exception {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        Callable<Integer> task = () -> {
+            Thread.sleep(1000);  // Simulating long task
+            return 123;  // Return value
+        };
+
+        Future<Integer> result = executor.submit(task);  // Submit the task
+        System.out.println("Task result: " + result.get());  // Get the result of the task
+
+        executor.shutdown();  // Shut down the executor
+    }
+}
+```
+Callable.call(): Returns a result (or throws an exception).
+Future.get(): Retrieves the result of the task once it completes.
+
+#### 5. Using ForkJoinPool
+The ForkJoinPool is designed for tasks that can be recursively divided into smaller tasks (forked) and later combined (joined). It is useful for parallel processing of tasks like divide-and-conquer algorithms.
+
+Example (Using ForkJoinPool):
+```java
+import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.ForkJoinPool;
+
+public class ForkJoinExample {
+    static class SumTask extends RecursiveTask<Integer> {
+        private final int start;
+        private final int end;
+
+        public SumTask(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        protected Integer compute() {
+            if (end - start <= 2) {
+                return start + end;  // Base case
+            }
+            int mid = (start + end) / 2;
+            SumTask left = new SumTask(start, mid);
+            SumTask right = new SumTask(mid + 1, end);
+
+            left.fork();  // Fork left task
+            right.fork(); // Fork right task
+
+            return left.join() + right.join();  // Join results from left and right tasks
+        }
+    }
+
+    public static void main(String[] args) {
+        ForkJoinPool pool = new ForkJoinPool();
+        SumTask task = new SumTask(1, 10);
+        int result = pool.invoke(task);  // Invoke the task
+        System.out.println("Sum result: " + result);  // Output: Sum result: 55
+    }
+}
+```
+
+Each method has its use case:
+
+- Thread and Runnable are typically used for simpler tasks or when you need to extend a class.
+- ExecutorService is ideal for managing a pool of threads and handling tasks asynchronously.
+- Callable is used when you need the thread to return a result.
+- ForkJoinPool is used for parallel tasks that can be divided into smaller tasks.
+
+### Concurrency Tools in Java
+Java provides several tools and APIs to handle concurrency effectively:
+
+#### 1. Synchronization
+Synchronization ensures that only one thread can access a shared resource at a time, preventing race conditions.
+
+Synchronized Methods:
+java
+```
+public synchronized void method() {
+    // Critical section
+}
+```
+Synchronized Blocks:
+```java
+synchronized (lockObject) {
+    // Critical section
+}
+```
+#### 2. Lock Framework
+The java.util.concurrent.locks package provides locks for more flexible thread synchronization.
+
+java
+```
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Main {
+    private final Lock lock = new ReentrantLock();
+
+    public void method() {
+        lock.lock();
+        try {
+            // Critical section
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+
+#### 3. Concurrent Collections
+Thread-safe collections like ConcurrentHashMap, CopyOnWriteArrayList, and BlockingQueue in the java.util.concurrent package are designed for concurrent access.
+
+#### 4. Atomic Variables
+The java.util.concurrent.atomic package provides atomic classes (AtomicInteger, AtomicLong, etc.) to perform atomic operations without explicit synchronization.
+
+```java
+AtomicInteger count = new AtomicInteger(0);
+count.incrementAndGet();
+```
+
+### Concurrency Design Patterns
+Producer-Consumer: One thread produces data while another consumes it.
+Read-Write Lock: Multiple threads can read simultaneously, but only one can write at a time.
+Future Pattern: Asynchronous computation results that can be retrieved later.
