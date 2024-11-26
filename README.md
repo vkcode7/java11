@@ -1954,3 +1954,199 @@ You should be able to answer the following questions about each Collection imple
 |HashMap   | Map                   | Yes          | No               | Yes            | No              |
 |TreeMap   | Map                   | No           | Yes              | No             | Yes             |
 
+
+### Generics
+Generics in Java allow you to define classes, interfaces, and methods with type parameters. This provides strong type checking at compile-time, reducing runtime errors and enabling reusable and type-safe code.
+
+Key Benefits of Generics
+- Type Safety: Detects type errors during compilation.
+- Code Reusability: Enables writing methods or classes that work with any type.
+- Eliminates Casting: Reduces boilerplate code for type casting.
+
+Syntax: Generics are specified using angle brackets (<>) with a type parameter.
+
+- T: Type (can represent any type).
+- E: Element (used in collections).
+- K and V: Key and Value (used in maps).
+- ?: Wildcard (unknown type).
+
+Examples of Generics
+#### 1. Generic Class
+A class with a type parameter that can work with any data type.
+
+```java
+public class GenericBox<T> {
+    private T item;
+
+    public void setItem(T item) {
+        this.item = item;
+    }
+
+    public T getItem() {
+        return item;
+    }
+
+    public static void main(String[] args) {
+        // GenericBox for Integer
+        GenericBox<Integer> intBox = new GenericBox<>();
+        intBox.setItem(123);
+        System.out.println("Integer Box: " + intBox.getItem());
+
+        // GenericBox for String
+        GenericBox<String> strBox = new GenericBox<>();
+        strBox.setItem("Hello");
+        System.out.println("String Box: " + strBox.getItem());
+    }
+}
+```
+Output:
+```mathematica
+Integer Box: 123
+String Box: Hello
+```
+
+#### 2. Generic Method
+A method that can accept arguments of any type.
+
+```java
+public class GenericMethodExample {
+    // Generic method
+    public static <T> void printArray(T[] array) {
+        for (T element : array) {
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        // Integer array
+        Integer[] intArray = {1, 2, 3};
+        printArray(intArray);
+
+        // String array
+        String[] strArray = {"A", "B", "C"};
+        printArray(strArray);
+    }
+}
+```
+
+Output:
+```css
+Copy code
+1 2 3 
+A B C
+```
+
+### 3. Generic Interface
+An interface with type parameters.
+
+```java
+interface GenericInterface<T> {
+    void display(T item);
+}
+
+class GenericClass<T> implements GenericInterface<T> {
+    @Override
+    public void display(T item) {
+        System.out.println("Item: " + item);
+    }
+}
+
+public class GenericInterfaceExample {
+    public static void main(String[] args) {
+        GenericInterface<String> strGeneric = new GenericClass<>();
+        strGeneric.display("Hello, Generics!");
+
+        GenericInterface<Integer> intGeneric = new GenericClass<>();
+        intGeneric.display(42);
+    }
+}
+```
+
+Output:
+```makefile
+Item: Hello, Generics!
+Item: 42
+```
+
+#### 4. Wildcards (?)
+Used when the exact type is not known.
+
+Upper Bound Wildcard (<? extends Type>): Accepts Type or its subclasses.
+
+```java
+import java.util.List;
+
+public class WildcardExample {
+    public static void printNumbers(List<? extends Number> list) {
+        for (Number number : list) {
+            System.out.println(number);
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Integer> intList = List.of(1, 2, 3);
+        List<Double> doubleList = List.of(1.1, 2.2, 3.3);
+
+        printNumbers(intList);
+        printNumbers(doubleList);
+    }
+}
+```
+
+Lower Bound Wildcard (<? super Type>): Accepts Type or its superclasses.
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class LowerBoundExample {
+    public static void addNumbers(List<? super Integer> list) {
+        list.add(1);
+        list.add(2);
+    }
+
+    public static void main(String[] args) {
+        List<Number> numberList = new ArrayList<>();
+        addNumbers(numberList);
+        System.out.println(numberList);
+    }
+}
+```
+
+#### 5. Generic Collections
+Java collections extensively use generics.
+
+Example: Using a Generic ArrayList
+```java
+import java.util.ArrayList;
+
+public class GenericCollectionExample {
+    public static void main(String[] args) {
+        // List of Strings
+        ArrayList<String> names = new ArrayList<>();
+        names.add("Alice");
+        names.add("Bob");
+
+        for (String name : names) {
+            System.out.println(name);
+        }
+
+        // List of Integers
+        ArrayList<Integer> numbers = new ArrayList<>();
+        numbers.add(10);
+        numbers.add(20);
+
+        for (Integer number : numbers) {
+            System.out.println(number);
+        }
+    }
+}
+```
+
+**Summary of Generics:**
+- Type Safety:	Prevents runtime ClassCastException.
+- Reusability:	Allows code to work with different types.
+- Wildcards:	Used when the exact type is unknown.
+- Bounded Types:	Restrict types to a specific range (extends or super).
+- Erasure:	Generic types are replaced with Object or bound types during compilation.
