@@ -1769,3 +1769,188 @@ Parsed Date-Time: 2023-12-25T10:30
 #### NumberFormat/DecimalFormat
 The NumberFormat and DecimalFormat classes in Java are used to format numbers for display in a locale-sensitive or custom manner. Both are part of the java.text package.
 
+## ARRAYS and COLLECTIONS
+### 1. List
+- An ordered collection of elements.
+- Allows duplicate elements.
+- Common implementations: ArrayList, LinkedList.
+- 
+Example: Using ArrayList
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListExample {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+
+        // Adding elements
+        list.add("Apple");
+        list.add("Banana");
+        list.add("Cherry");
+        list.add("Apple"); // Duplicates allowed
+
+        System.out.println("List: " + list);
+
+        // Access by index
+        System.out.println("Element at index 1: " + list.get(1));
+
+        // Remove an element
+        list.remove("Banana");
+        System.out.println("After removal: " + list);
+    }
+}
+```
+Output:
+```yaml
+List: [Apple, Banana, Cherry, Apple]
+Element at index 1: Banana
+After removal: [Apple, Cherry, Apple]
+```
+
+### 2. Set
+- A collection that does not allow duplicate elements.
+- No guaranteed order (use LinkedHashSet for insertion order or TreeSet for sorted order).
+- Common implementations: HashSet, LinkedHashSet, TreeSet.
+  
+Example: Using HashSet
+```java
+import java.util.HashSet;
+import java.util.Set;
+
+public class SetExample {
+    public static void main(String[] args) {
+        Set<String> set = new HashSet<>();
+
+        // Adding elements
+        set.add("Apple");
+        set.add("Banana");
+        set.add("Cherry");
+        set.add("Apple"); // Duplicate ignored
+
+        System.out.println("Set: " + set);
+
+        // Check for an element
+        System.out.println("Contains 'Banana': " + set.contains("Banana"));
+
+        // Remove an element
+        set.remove("Banana");
+        System.out.println("After removal: " + set);
+    }
+}
+```
+Output:
+```yaml
+Set: [Banana, Cherry, Apple]
+Contains 'Banana': true
+After removal: [Cherry, Apple]
+```
+
+### 3. Queue
+- A collection that follows FIFO (First-In-First-Out) order.
+- Common implementations: LinkedList (as a queue), PriorityQueue.
+  
+Example: Using LinkedList as a Queue
+```java
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class QueueExample {
+    public static void main(String[] args) {
+        Queue<String> queue = new LinkedList<>();
+
+        // Adding elements
+        queue.add("First");
+        queue.add("Second");
+        queue.add("Third");
+
+        System.out.println("Queue: " + queue);
+
+        // Peek at the front
+        System.out.println("Front element: " + queue.peek());
+
+        // Remove the front element
+        queue.poll();
+        System.out.println("After poll: " + queue);
+    }
+}
+```
+Output:
+
+```yaml
+Queue: [First, Second, Third]
+Front element: First
+After poll: [Second, Third]
+```
+
+### 4. Map
+- A collection of key-value pairs.
+- Keys must be unique; values can be duplicated.
+- Common implementations: HashMap, LinkedHashMap, TreeMap.
+
+Example: Using HashMap
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapExample {
+    public static void main(String[] args) {
+        Map<Integer, String> map = new HashMap<>();
+
+        // Adding key-value pairs
+        map.put(1, "Apple");
+        map.put(2, "Banana");
+        map.put(3, "Cherry");
+
+        System.out.println("Map: " + map);
+
+        // Access by key
+        System.out.println("Value for key 2: " + map.get(2));
+
+        // Remove an entry
+        map.remove(3);
+        System.out.println("After removal: " + map);
+
+        // Iterating over entries
+        for (Map.Entry<Integer, String> entry : map.entrySet()) {
+            System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+        }
+    }
+}
+```
+
+Output:
+```yaml
+Map: {1=Apple, 2=Banana, 3=Cherry}
+Value for key 2: Banana
+After removal: {1=Apple, 2=Banana}
+Key: 1, Value: Apple
+Key: 2, Value: Banana
+```
+**Summary of Usage**
+![image](https://github.com/user-attachments/assets/6dd18af2-220e-46e8-a18b-ab2880dd4ca8)
+
+Refer https://github.com/dlbunker/Ps-collections-1z0-819 for cheatsheets
+## Basic Collection Type Attributes and Characterists
+You should be able to answer the following questions about each core Collection type
+
+|     | Elements Ordered?   | Allows Duplicates? | Elements Added/Removed in a Certain Order? | Allows Key/Values? |
+|-----|---------------------|--------------------|--------------------------------------------|--------------------|
+|List | Yes - Numbered Index| Yes                | No                                         | No                 |
+|Set  | No                  | No                 | No                                         | No                 |
+|Queue| Yes - Placed Order  | Yes                | Yes                                        | No                 |
+|Map  | No                  | Yes - Values only  | No                                         | Yes                |
+
+
+## Specific Collection Type Attributes and Characterists
+You should be able to answer the following questions about each Collection implementation provided by Java
+
+| Java Type| Parent Interface Type | Allows null? | Elements Sorted? | Uses hashCode? | Uses compareTo? |
+|----------|-----------------------|--------------|------------------|----------------|-----------------|
+|ArrayList | List                  | Yes          | No               | No             | No              |
+|LinkedList| List and Queue        | Yes          | No               | No             | No              |
+|HashSet   | Set                   | Yes          | No               | Yes            | No              |
+|TreeSet   | Set                   | No           | Yes              | No             | Yes             |
+|HashMap   | Map                   | Yes          | No               | Yes            | No              |
+|TreeMap   | Map                   | No           | Yes              | No             | Yes             |
+
