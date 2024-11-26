@@ -1430,3 +1430,342 @@ count.incrementAndGet();
 Producer-Consumer: One thread produces data while another consumes it.
 Read-Write Lock: Multiple threads can read simultaneously, but only one can write at a time.
 Future Pattern: Asynchronous computation results that can be retrieved later.
+
+## LOCALIZATION / INTERNATIONALIZATION
+
+### Locale Class
+The Locale class in Java represents a specific geographical, cultural, or political region. It is used to tailor information to the user's regional preferences, such as language, country, or variant. The class is part of the java.util package and plays a critical role in internationalization (i18n).
+
+Creating Locales
+```java
+import java.util.Locale;
+
+public class LocaleExample {
+    public static void main(String[] args) {
+        // Locale with language only
+        Locale locale1 = new Locale("en");
+        
+        // Locale with language and country
+        Locale locale2 = new Locale("fr", "FR");
+        
+        // Locale with language, country, and variant
+        Locale locale3 = new Locale("en", "US", "WIN");
+
+        // Using factory method
+        Locale locale4 = Locale.forLanguageTag("en-GB");
+
+        System.out.println(locale1); // Output: en
+        System.out.println(locale2); // Output: fr_FR
+        System.out.println(locale3); // Output: en_US_WIN
+        System.out.println(locale4); // Output: en_GB
+    }
+}
+```
+
+Using LOcales for formatting
+```java
+import java.text.NumberFormat;
+import java.util.Locale;
+
+public class LocaleFormattingExample {
+    public static void main(String[] args) {
+        double amount = 1234567.89;
+
+        // US locale
+        Locale usLocale = Locale.US;
+        NumberFormat usFormat = NumberFormat.getCurrencyInstance(usLocale);
+        System.out.println("US: " + usFormat.format(amount)); // Output: US: $1,234,567.89
+
+        // French locale
+        Locale frLocale = Locale.FRANCE;
+        NumberFormat frFormat = NumberFormat.getCurrencyInstance(frLocale);
+        System.out.println("France: " + frFormat.format(amount)); // Output: France: 1 234 567,89 €
+    }
+}
+```
+
+### Use Cases
+- Formatting: Dates, times, numbers, and currencies based on locale.
+- Resource Bundles: Load locale-specific text and data from ResourceBundle.
+- Internationalization (i18n): Applications designed for global audiences use Locale for regional preferences.
+
+### ResourceBundle
+A ResourceBundle in Java is used to store locale-specific text and data, allowing developers to internationalize their applications. It enables loading localized content (e.g., strings, messages) based on the current or specified Locale.
+
+Structure of ResourceBundle: A ResourceBundle typically consists of property files with the .properties extension. Each file corresponds to a specific Locale and contains key-value pairs.
+
+### Example Files
+Messages_en.properties (default for English)
+
+```properties
+greeting=Hello
+farewell=Goodbye
+inquiry=How are you?
+```
+
+Messages_fr.properties (French locale)
+```properties
+greeting=Bonjour
+farewell=Au revoir
+inquiry=Comment ça va?
+```
+
+Messages_es.properties (Spanish locale)
+```properties
+Copy code
+greeting=Hola
+farewell=Adiós
+inquiry=¿Cómo estás?
+```
+
+Loading and Using ResourceBundle
+```java
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+public class ResourceBundleExample {
+    public static void main(String[] args) {
+        // Default Locale
+        Locale defaultLocale = Locale.getDefault();
+
+        // French Locale
+        Locale frenchLocale = new Locale("fr", "FR");
+
+        // Spanish Locale
+        Locale spanishLocale = new Locale("es", "ES");
+
+        // Load ResourceBundle for the default Locale
+        ResourceBundle bundleDefault = ResourceBundle.getBundle("Messages", defaultLocale);
+
+        // Load ResourceBundle for French
+        ResourceBundle bundleFrench = ResourceBundle.getBundle("Messages", frenchLocale);
+
+        // Load ResourceBundle for Spanish
+        ResourceBundle bundleSpanish = ResourceBundle.getBundle("Messages", spanishLocale);
+
+        // Print messages for different locales
+        System.out.println("Default Locale - Greeting: " + bundleDefault.getString("greeting"));
+        System.out.println("French Locale - Greeting: " + bundleFrench.getString("greeting"));
+        System.out.println("Spanish Locale - Greeting: " + bundleSpanish.getString("greeting"));
+    }
+}
+```
+Output: Assuming your default locale is English:
+```yaml
+Default Locale - Greeting: Hello
+French Locale - Greeting: Bonjour
+Spanish Locale - Greeting: Hola
+```
+
+### Bi-directional text: LTR <-> RTL
+Key Classes in Java for BiDi Text:
+- 1. java.text.Bidi
+The Bidi class supports bidirectional text analysis. It determines the embedding levels of text and whether characters should be rendered in LTR or RTL order.
+- 2. java.awt.font.TextLayout
+Used for rendering text with complex layouts, including BiDi. Can process mixed-direction text for graphical display.
+
+#### Using the Bidi Class
+The Bidi class analyzes a string for its directionality and reorders characters for proper display.
+
+Example: Detecting and Reordering Text
+```java
+import java.text.Bidi;
+
+public class BidiExample {
+    public static void main(String[] args) {
+        // A string with mixed LTR and RTL text
+        String text = "This is English text \u0627\u0644\u0646\u0635 \u0627\u0644\u0639\u0631\u0628\u064A (Arabic text)";
+
+        // Analyze the text for directionality
+        Bidi bidi = new Bidi(text, Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+
+        // Check if the text is mixed-direction
+        if (bidi.isMixed()) {
+            System.out.println("The text has mixed directions.");
+        }
+
+        // Get reordered text
+        String reorderedText = bidi.writeReordered(Bidi.DIRECTION_LEFT_TO_RIGHT);
+        System.out.println("Reordered text: " + reorderedText);
+    }
+}
+```
+Output:
+```yaml
+The text has mixed directions.
+Reordered text: This is English text (Arabic text) النص العربي
+```
+
+**Summary**
+- Bidi: For analyzing and reordering bidirectional text.
+- TextLayout: For rendering complex bidirectional layouts.
+- Built-in support in Swing and JavaFX simplifies handling BiDi in GUI applications.
+- BiDi features integrate well with Java's internationalization framework.
+
+#### Locale and Currency
+Here is an example of how to use Locale and NumberFormat to format currency values based on a specific locale in Java:
+```java
+import java.text.NumberFormat;
+import java.util.Locale;
+
+public class CurrencyLocaleExample {
+    public static void main(String[] args) {
+        double amount = 12345.67;
+
+        // Locale for US
+        Locale usLocale = Locale.US;
+        NumberFormat usCurrencyFormat = NumberFormat.getCurrencyInstance(usLocale);
+        System.out.println("US: " + usCurrencyFormat.format(amount));
+
+        // Locale for France
+        Locale franceLocale = Locale.FRANCE;
+        NumberFormat franceCurrencyFormat = NumberFormat.getCurrencyInstance(franceLocale);
+        System.out.println("France: " + franceCurrencyFormat.format(amount));
+
+        // Locale for Japan
+        Locale japanLocale = Locale.JAPAN;
+        NumberFormat japanCurrencyFormat = NumberFormat.getCurrencyInstance(japanLocale);
+        System.out.println("Japan: " + japanCurrencyFormat.format(amount));
+
+        // Locale for India (custom locale with INR symbol)
+        Locale indiaLocale = new Locale("en", "IN");
+        NumberFormat indiaCurrencyFormat = NumberFormat.getCurrencyInstance(indiaLocale);
+        System.out.println("India: " + indiaCurrencyFormat.format(amount));
+    }
+}
+```
+Output:
+```makefile
+US: $12,345.67
+France: 12 345,67 €
+Japan: ¥12,346
+India: ₹12,345.67
+```
+
+The Currency class in Java, part of the java.util package, represents ISO 4217 currency codes and provides information about a specific currency, such as its symbol or default fractional digits.
+
+You can use the Currency class in conjunction with the Locale class to retrieve currency-related information or format amounts.
+```java
+import java.util.Currency;
+import java.util.Locale;
+
+public class CurrencyExample {
+    public static void main(String[] args) {
+        // Locale for US
+        Locale usLocale = Locale.US;
+        Currency usCurrency = Currency.getInstance(usLocale);
+        System.out.println("Currency for US:");
+        System.out.println("Code: " + usCurrency.getCurrencyCode());
+        System.out.println("Symbol: " + usCurrency.getSymbol());
+        System.out.println("Default Fraction Digits: " + usCurrency.getDefaultFractionDigits());
+        
+        System.out.println();
+
+        // Locale for Japan
+        Locale japanLocale = Locale.JAPAN;
+        Currency japanCurrency = Currency.getInstance(japanLocale);
+        System.out.println("Currency for Japan:");
+        System.out.println("Code: " + japanCurrency.getCurrencyCode());
+        System.out.println("Symbol: " + japanCurrency.getSymbol());
+        System.out.println("Default Fraction Digits: " + japanCurrency.getDefaultFractionDigits());
+
+        System.out.println();
+
+        // Custom Currency for India
+        Locale indiaLocale = new Locale("en", "IN");
+        Currency indiaCurrency = Currency.getInstance(indiaLocale);
+        System.out.println("Currency for India:");
+        System.out.println("Code: " + indiaCurrency.getCurrencyCode());
+        System.out.println("Symbol: " + indiaCurrency.getSymbol());
+        System.out.println("Default Fraction Digits: " + indiaCurrency.getDefaultFractionDigits());
+    }
+}
+```
+Output:
+```yaml
+Currency for US:
+Code: USD
+Symbol: $
+Default Fraction Digits: 2
+
+Currency for Japan:
+Code: JPY
+Symbol: ¥
+Default Fraction Digits: 0
+
+Currency for India:
+Code: INR
+Symbol: ₹
+Default Fraction Digits: 2
+```
+
+**Using Currency with NumberFormat**<br>
+The Currency class can also be paired with NumberFormat for formatting:
+
+```java
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.Locale;
+
+public class CurrencyFormattingExample {
+    public static void main(String[] args) {
+        double amount = 12345.67;
+
+        // Locale for UK
+        Locale ukLocale = Locale.UK;
+        Currency ukCurrency = Currency.getInstance(ukLocale);
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(ukLocale);
+        currencyFormat.setCurrency(ukCurrency);
+
+        System.out.println("Formatted Amount in UK Locale: " + currencyFormat.format(amount));
+    }
+}
+```
+Output:
+```yaml
+Copy code
+Formatted Amount in UK Locale: £12,345.67
+```
+
+#### LocalDateTime/LocalTime/DateTimeFormatter classes
+```java
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class LocalDateTimeExample {
+    public static void main(String[] args) {
+        // Current Date-Time
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("Current Date-Time: " + now);
+
+        // Custom Date-Time
+        LocalDateTime customDateTime = LocalDateTime.of(2023, 12, 25, 10, 30);
+        System.out.println("Custom Date-Time: " + customDateTime);
+
+        // Adding days and hours
+        LocalDateTime futureDateTime = now.plusDays(10).plusHours(2);
+        System.out.println("Future Date-Time: " + futureDateTime);
+
+        // Formatting Date-Time
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        System.out.println("Formatted Date-Time: " + now.format(formatter));
+
+        // Parsing a String to LocalDateTime
+        String dateTimeString = "2023-12-25 10:30";
+        LocalDateTime parsedDateTime = LocalDateTime.parse(dateTimeString, formatter);
+        System.out.println("Parsed Date-Time: " + parsedDateTime);
+    }
+}
+```
+Output:
+```yaml
+Current Date-Time: 2024-11-26T20:37:37.450499955
+Custom Date-Time: 2023-12-25T10:30
+Future Date-Time: 2024-12-06T22:37:37.450499955
+Formatted Date-Time: 2024-11-26 20:37
+Parsed Date-Time: 2023-12-25T10:30
+```
+
+#### NumberFormat/DecimalFormat
+The NumberFormat and DecimalFormat classes in Java are used to format numbers for display in a locale-sensitive or custom manner. Both are part of the java.text package.
+
