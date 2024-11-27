@@ -2259,3 +2259,150 @@ The jlink tool can create a custom runtime with only the required modules, reduc
 ```bash
 jlink --module-path <path_to_modules> --add-modules com.example.main --output custom-runtime
 ```
+
+### Services
+
+In Java, services are part of the Service Provider Framework introduced in Java 9 to work seamlessly with the module system. They allow modules to provide implementations of a service (an interface or abstract class) and let other modules consume these services without knowing the exact implementation.
+
+This decoupling enhances modularity, making applications more extensible and easier to maintain.
+
+#### Key Components of the Service Framework
+- Service Interface: Defines the functionality that service providers implement.
+- Service Provider: A class that implements the service interface.
+- Service Consumer: A module or class that uses the service.
+- ServiceLoader: A utility class to load service implementations at runtime.
+
+#### How Services Work in Modules
+The module system uses the provides and uses directives in module-info.java for service-based programming.
+
+- provides: Declares that a module provides an implementation of a service.
+- uses: Declares that a module consumes a service.
+
+#### Example 
+1. Defining a Service Interface
+```java
+// src/com.example.service/Service.java
+package com.example.service;
+
+public interface Service {
+    void execute();
+}
+```
+
+2. Creating a Service Provider
+```java
+// src/com.example.provider/Provider.java
+package com.example.provider;
+
+import com.example.service.Service;
+
+public class Provider implements Service {
+    @Override
+    public void execute() {
+        System.out.println("Service executed by Provider");
+    }
+}
+```
+
+module-info.java for the Provider Module:
+```java
+module com.example.provider {
+    requires com.example.service; // Depends on the service interface
+    provides com.example.service.Service with com.example.provider.Provider; // Provides implementation
+}
+```
+
+3. Using the Service in a Consumer Module
+```java
+// src/com.example.consumer/Main.java
+package com.example.consumer;
+
+import com.example.service.Service;
+import java.util.ServiceLoader;
+
+public class Main {
+    public static void main(String[] args) {
+        ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
+        for (Service service : loader) {
+            service.execute(); // Dynamically loads and executes the service
+        }
+    }
+}
+```
+
+module-info.java for the Consumer Module:
+```java
+module com.example.consumer {
+    requires com.example.service; // Depends on the service interface
+    uses com.example.service.Service; // Declares that it uses the service
+}
+```
+
+Structure
+```arduino
+src
+ ├── com.example.service
+ │   ├── module-info.java
+ │   └── com.example.service.Service.java
+ ├── com.example.provider
+ │   ├── module-info.java
+ │   └── com.example.provider.Provider.java
+ └── com.example.consumer
+     ├── module-info.java
+     └── com.example.consumer.Main.java
+```
+
+#### Key Points
+- Service Declaration: A module providing a service uses the provides directive.
+- Service Consumption: A module consuming a service uses the uses directive.
+- Dynamic Loading: ServiceLoader dynamically loads available implementations at runtime.
+- Encapsulation: Consumers do not need to know the details of the service providers.
+
+#### Benefits of Using Services in Modules
+- Decoupling: Consumers depend on the service interface, not on specific implementations.
+- Extensibility: New implementations can be added without changing the consumer module.
+- Dynamic Behavior: Services can be loaded at runtime, making the application more flexible.
+- Enhanced Maintainability: Clear boundaries between service providers and consumers.
+
+
+### How Java Finds and Loads Modules
+Java finds and loads modules using the module path, a mechanism introduced with the Java Platform Module System (JPMS) in Java 9. The module path is a sequence of directories or .jar files where the Java runtime searches for modules. It acts similarly to the classpath, but it is specifically designed for modular applications.
+
+**Location of Modules:**
+
+Modules are placed in directories or .jar files that are part of the module path.
+The module path is specified using the --module-path option when running or compiling Java applications.
+
+**Module Discovery:**
+
+When a module is required, the Java runtime searches the specified module path for a module-info.class file in the compiled .jar or directory.
+This file declares the name of the module and its dependencies.
+
+**Module Resolution:**
+
+The Java runtime or compiler resolves the module graph based on:
+- Direct dependencies declared using requires in module-info.java.
+- Transitive dependencies declared using requires transitive.
+- If any required module is missing or there is a cyclic dependency, the application fails to run.
+Loading Modules:
+
+Once resolved, the runtime loads the bytecode from the modules' module-info.class and other .class files.
+
+![image](https://github.com/user-attachments/assets/61ebbe78-ce5a-427c-925e-6d0caf973eb4)
+
+
+**System Modules:**
+
+The Java runtime includes several built-in modules, such as java.base, java.sql, and java.desktop.
+These are located in the JDK's module repository ($JAVA_HOME/lib/modules).
+
+**Custom Modules:**
+
+Developers provide modules via the --module-path.
+```bash
+# compiling
+javac --module-path custom_modules -d output_dir src/com.example.module/module-info.java src/com.example.module/Main.java
+
+# running
+java --module-path custom_modules:other_modules --module com.example.module/com.example.module.Main
+```
