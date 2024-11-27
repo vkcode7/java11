@@ -2150,3 +2150,112 @@ public class GenericCollectionExample {
 - Wildcards:	Used when the exact type is unknown.
 - Bounded Types:	Restrict types to a specific range (extends or super).
 - Erasure:	Generic types are replaced with Object or bound types during compilation.
+
+## MODULES
+A Java module is a grouping of related packages and resources into a single unit, introduced in Java 9 as part of the Java Platform Module System (JPMS). Modules are optional. JAR File is NOT a module.
+
+### Key Features of Java Modules:
+#### Encapsulation:
+- A module explicitly declares which packages it exposes for external use.
+- Packages not explicitly exported remain inaccessible to other modules.
+
+#### Dependency Management:
+A module specifies which other modules it depends on.
+
+#### Improved Security and Performance:
+- Only required modules are loaded, reducing runtime overhead.
+- Encapsulation ensures restricted access to internal APIs.
+
+#### Better Deployment:
+Supports creating custom runtimes using jlink with only the required modules.
+
+### Defining a Module
+A module is defined using a module-info.java file, which resides in the root of the module directory.
+
+Syntax
+```java
+module <module-name> {
+    // Declare dependencies
+    requires <module-name>;
+    
+    // Export packages
+    exports <package-name>;
+    
+    // Use services
+    uses <interface-name>;
+    
+    // Provide implementations for services
+    provides <interface-name> with <class-name>;
+}
+```
+
+#### Example: Module Definition
+- Consider a module named com.example.app:
+
+```java
+// module-info.java
+module com.example.app {
+    requires java.base; // Automatically required; optional to specify
+    requires com.example.util;
+
+    exports com.example.app.api;
+}
+```
+
+Structure
+```arduino
+src
+ ├── com.example.app
+ │   ├── module-info.java
+ │   ├── com
+ │       └── example
+ │           └── app
+ │               ├── api
+ │               │    └── HelloWorld.java
+ │               └── internal
+ │                    └── AppHelper.java
+ └── com.example.util
+     ├── module-info.java
+     ├── com
+         └── example
+             └── util
+                 └── Utility.java
+```
+
+#### Exporting and Using Packages
+- com.example.app module exports com.example.app.api but keeps com.example.app.internal hidden.
+- Other modules can use only the exported com.example.app.api package.
+
+#### Consuming a Module
+Another module, say com.example.main, can depend on com.example.app:
+
+```java
+// module-info.java in com.example.main
+module com.example.main {
+    requires com.example.app;
+}
+```
+
+### Core Directives in module-info.java
+Directive:	Purpose
+- requires:	Declares dependency on another module.
+- exports:	Makes a package accessible to other modules.
+- opens:	Allows reflection-based access to a package (e.g., for frameworks like Spring).
+- provides:	Declares that the module provides an implementation of a service.
+- uses:	Declares that the module consumes a service.
+- transitive:	Ensures that modules requiring this module implicitly require its dependencies (requires transitive).
+
+### Built-in Java Modules
+Java provides several predefined modules, such as:
+
+- java.base	Core classes like java.lang, java.util (automatically included).
+- java.sql	JDBC API for database access.
+- java.xml	XML processing.
+- java.desktop	GUI libraries like Swing and AWT.
+
+### Custom Runtime Using Modules
+The jlink tool can create a custom runtime with only the required modules, reducing size and improving performance:
+
+```bash
+jlink --module-path <path_to_modules> --add-modules com.example.main --output custom-runtime
+```
