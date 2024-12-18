@@ -2406,3 +2406,215 @@ javac --module-path custom_modules -d output_dir src/com.example.module/module-i
 # running
 java --module-path custom_modules:other_modules --module com.example.module/com.example.module.Main
 ```
+
+## I/O
+
+### Working with Files
+
+In Java, the File class (part of the java.io package) represents a file or directory path in an abstract manner. It provides methods to create, delete, and inspect file properties but does not directly handle file content (e.g., reading or writing). The File object represents the path to a file or directory, not the actual content. It can refer to a file or directory that may or may not exist.
+
+#### Commonly Used Constructors:
+- File(String pathname): Creates a File object using a specified path.<br>
+- File(String parent, String child): Constructs a File object from parent and child pathnames.<br>
+- File(File parent, String child): Uses a File object as the parent and a string for the child.<br>
+
+#### Key Methods:
+Existence:
+exists(): Checks if the file or directory exists.
+
+Attributes:
+- isFile(): Checks if it’s a file.
+- isDirectory(): Checks if it’s a directory.
+- length(): Returns the file size in bytes.
+
+Operations:
+- createNewFile(): Creates a new file.
+- mkdir(): Creates a new directory.
+- mkdirs(): Creates directory along with any necessary but nonexistent parent directories.
+- delete(): Deletes the file or directory.
+
+Path Information:
+- getName(): Returns the name of the file/directory.
+- getAbsolutePath(): Returns the absolute pathname.
+- getParent(): Returns the parent directory.
+
+Listing Contents:
+- list(): Returns an array of filenames in a directory.
+- listFiles(): Returns an array of File objects in a directory.
+
+Usage Example:
+
+```java
+import java.io.File;
+import java.io.IOException;
+
+public class FileExample {
+    public static void main(String[] args) {
+        try {
+            // Creating a File object
+            File file = new File("example.txt");
+
+            // Check if the file exists
+            if (!file.exists()) {
+                // Create a new file
+                file.createNewFile();
+                System.out.println("File created: " + file.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+
+            // Display file properties
+            System.out.println("Absolute Path: " + file.getAbsolutePath());
+            System.out.println("Is File: " + file.isFile());
+            System.out.println("File Size: " + file.length() + " bytes");
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+}
+```
+
+Notes
+- The File class only deals with metadata and path operations.
+- For reading and writing content, use other classes like FileReader, FileWriter, BufferedReader, BufferedWriter, or newer APIs like Files in java.nio.file.
+
+#### Key Differences between Absolute vs Canonical path
+Aspect	        Absolute Path	            Canonical Path
+======          ==============              ==============
+Symbolic Links	Not resolved	            Resolved
+Redundancy	    May contain . or ..	        No . or .., completely resolved
+Uniqueness	    May not be unique	        Always unique for the same file/directory
+Performance	    Generally faster	        Slightly slower (resolves links)
+
+### Features of Path Class
+Abstraction:
+- Represents the path to a file or directory, not the file or directory itself.
+- Works with both absolute and relative paths.
+- Provides powerful methods for path manipulation, path resolution, and file system operations.
+
+```java
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
+
+public class PathExample {
+    public static void main(String[] args) {
+        // Create a Path object
+        Path path = Paths.get("/home/user/docs/file.txt");
+
+        // Path Information
+        System.out.println("File Name: " + path.getFileName());
+        System.out.println("Parent Path: " + path.getParent());
+        System.out.println("Root: " + path.getRoot());
+
+        // Convert to Absolute Path
+        System.out.println("Absolute Path: " + path.toAbsolutePath());
+
+        // Normalize the Path
+        Path pathWithRedundancy = Paths.get("/home/user/../docs/./file.txt");
+        System.out.println("Normalized Path: " + pathWithRedundancy.normalize());
+
+        // Resolve a Subpath
+        Path resolvedPath = path.resolve("subfolder/subfile.txt");
+        System.out.println("Resolved Path: " + resolvedPath);
+
+        // Relativize Paths
+        Path basePath = Paths.get("/home/user");
+        Path otherPath = Paths.get("/home/user/docs/file.txt");
+        Path relativePath = basePath.relativize(otherPath);
+        System.out.println("Relative Path: " + relativePath);
+
+        // Convert to Real Path
+        try {
+            System.out.println("Canonical Path: " + path.toRealPath());
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
+```
+Output
+```bash
+File Name: file.txt
+Parent Path: /home/user/docs
+Root: /
+Absolute Path: /home/user/docs/file.txt
+Normalized Path: /home/docs/file.txt
+Resolved Path: /home/user/docs/file.txt/subfolder/subfile.txt
+Relative Path: docs/file.txt
+Canonical Path: /home/user/docs/file.txt
+```
+
+### Reader class
+The Reader class in Java is an abstract class in the java.io package. It provides a foundation for reading character streams, as opposed to byte streams (which are handled by classes like InputStream).
+
+Concrete subclasses include FileReader, BufferedReader, StringReader, etc.
+
+**Common Subclasses**
+- FileReader: Reads character streams from a file.
+- BufferedReader: Reads text efficiently using a buffer, and provides additional methods like readLine() for line-by-line reading.
+- InputStreamReader: Bridges byte streams and character streams, allowing you to convert bytes into characters.
+- StringReader: Reads characters from a string as a stream.
+
+Code Example: Using FileReader and BufferedReader
+```java
+import java.io.*;
+
+public class ReaderExample {
+    public static void main(String[] args) {
+        try {
+            // Create a FileReader
+            FileReader fileReader = new FileReader("example.txt");
+
+            // Wrap it in a BufferedReader for efficiency
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            // Read and print the file content line by line
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            // Close the reader
+            bufferedReader.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+}
+```
+
+#### FileWriter and BufferedWriter
+- FileWriter: Used to write characters to a file.
+- BufferedWriter: Wraps the FileWriter to provide buffering, which improves performance when writing large amounts of text.
+- 
+```java
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class WriteToFileExample {
+    public static void main(String[] args) {
+        // File path
+        String filePath = "example.txt";
+
+        try {
+            // Create FileWriter and wrap it with BufferedWriter for efficiency
+            FileWriter fileWriter = new FileWriter(filePath, true); // 'true' enables appending mode
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            // Write data to the file
+            bufferedWriter.write("Hello, World!");
+            bufferedWriter.newLine(); // Add a newline
+            bufferedWriter.write("Welcome to Java file writing.");
+
+            // Close the writer to release resources
+            bufferedWriter.close();
+
+            System.out.println("Data written to file successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+        }
+    }
+}
+```
