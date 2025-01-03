@@ -1,6 +1,17 @@
 # Java SE 11 Developer Certification (1Z0-819)
 
-## WORKING WITH JAVA DATA TYPES
+- Working with Java Data Types and String APIs
+- Program Flow in Java
+- OOPS: Java Object Oriented Approach
+- Exceptions
+- Streams and Lambda APIs
+- Threads
+- Localization/ Internationalization
+- Arrays and Collections + Generics
+- Modules
+- Java I/O APIs
+
+## WORKING WITH JAVA DATA TYPES and STRING APIs
 
 ## Primitive Types in Java
 ```java
@@ -265,6 +276,40 @@ equals(): Compares the contents (character sequence) of two strings.<br>
 Behavior: Checks if the actual values (characters in the string) are the same, regardless of whether the objects are stored at different memory locations.<br>
 
 ==: Compares the references (memory addresses) of two objects. Does not compare the actual content of the strings.
+
+### Math class
+```java
+public class MathClassExamples {
+    public static void main(String[] args) {
+        // 1. Absolute Value
+        System.out.println("Absolute Value of -5: " + Math.abs(-5)); // Output: 5
+
+        // 2. Maximum and Minimum
+        System.out.println("Max of 10 and 20: " + Math.max(10, 20)); // Output: 20
+        System.out.println("Min of 10 and 20: " + Math.min(10, 20)); // Output: 10
+
+        // 3. Rounding
+        System.out.println("Ceil of 5.3: " + Math.ceil(5.3)); // Output: 6.0
+        System.out.println("Floor of 5.7: " + Math.floor(5.7)); // Output: 5.0
+        System.out.println("Round of 5.5: " + Math.round(5.5)); // Output: 6
+        System.out.println("Round of 5.4: " + Math.round(5.4)); // Output: 5
+
+        // 4. Power and Square Root
+        System.out.println("2 to the power of 3: " + Math.pow(2, 3)); // Output: 8.0
+        System.out.println("Square root of 16: " + Math.sqrt(16)); // Output: 4.0
+
+        // 5. Logarithms
+        System.out.println("Natural Log of e: " + Math.log(Math.E)); // Output: 1.0
+        System.out.println("Log base 10 of 1000: " + Math.log10(1000)); // Output: 3.0
+
+        // 6. Random Number
+        System.out.println("Random number between 0.0 and 1.0: " + Math.random());
+
+        // 7. Exponential
+        System.out.println("e to the power of 2: " + Math.exp(2)); // Output: e^2
+    }
+}
+```
 
 ## PROGRAM FLOW
 
@@ -2656,6 +2701,8 @@ Concrete subclasses include FileReader, BufferedReader, StringReader, etc.
 - InputStreamReader: Bridges byte streams and character streams, allowing you to convert bytes into characters.
 - StringReader: Reads characters from a string as a stream.
 
+#### FileReader and BufferedReader
+
 Code Example: Using FileReader and BufferedReader
 ```java
 import java.io.*;
@@ -2718,3 +2765,150 @@ public class WriteToFileExample {
     }
 }
 ```
+
+### InputStream / OutputStream
+The InputStream and OutputStream classes in Java are the foundation of the I/O (Input/Output) system. These classes provide an abstraction for reading and writing data, respectively, as streams of bytes.
+
+#### InputStream: Reads data from a source like files, network sockets, or memory buffers.
+Common Subclasses:
+- FileInputStream: Reads from a file.
+- BufferedInputStream: Buffers input for efficiency.
+- ByteArrayInputStream: Reads from a byte array.
+
+```java
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class InputStreamExample {
+    public static void main(String[] args) {
+        try (FileInputStream input = new FileInputStream("example.txt")) {
+            int data;
+            while ((data = input.read()) != -1) {
+                System.out.print((char) data); // Read and print character
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### OutputStream: Writes data to a destination like files, network sockets, or memory buffers.
+Common Subclasses:
+- FileOutputStream: Writes to a file.
+- BufferedOutputStream: Buffers output for efficiency.
+- ByteArrayOutputStream: Writes to a byte array.
+
+```java
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class OutputStreamExample {
+    public static void main(String[] args) {
+        try (FileOutputStream output = new FileOutputStream("output.txt")) {
+            String data = "Hello, World!";
+            output.write(data.getBytes()); // Write string as bytes
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### InputStreamReader in Java
+InputStreamReader is a class in Java's java.io package that bridges a byte stream (InputStream) to a character stream (Reader). It reads bytes from an underlying InputStream and converts them into characters using a specified character encoding.
+
+#### OutputStreamWriter in Java
+OutputStreamWriter is a class in Java's java.io package that bridges a byte stream (OutputStream) to a character stream (Writer). It converts characters into bytes using a specified character encoding.
+
+#### DataInputStream and DataOutputStream in Java
+DataInputStream and DataOutputStream are part of the java.io package and are used for reading and writing primitive data types (e.g., int, float, double, boolean) and strings in a machine-independent manner.
+
+```java
+import java.io.*;
+
+public class DataStreamExample {
+    public static void main(String[] args) {
+        String fileName = "example.bin";
+
+        // Write data
+        try (FileOutputStream fos = new FileOutputStream(fileName);
+             DataOutputStream dos = new DataOutputStream(fos)) {
+
+            dos.writeInt(123);
+            dos.writeDouble(456.78);
+            dos.writeUTF("Hello, Data Streams!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Read data
+        try (FileInputStream fis = new FileInputStream(fileName);
+             DataInputStream dis = new DataInputStream(fis)) {
+
+            int number = dis.readInt();
+            double value = dis.readDouble();
+            String message = dis.readUTF();
+
+            System.out.println("Number: " + number);
+            System.out.println("Value: " + value);
+            System.out.println("Message: " + message);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+#### ObjectInputStream and ObjectOutputStream in Java
+ObjectInputStream and ObjectOutputStream are classes in the java.io package used for object serialization and deserialization in Java. They allow you to write objects to a stream or read objects from a stream.
+
+```java
+import java.io.*;
+
+class Person implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{name='" + name + "', age=" + age + '}';
+    }
+}
+
+public class ObjectStreamExample {
+    public static void main(String[] args) {
+        String fileName = "person.obj";
+
+        // Serialize the object
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            Person person = new Person("Bob", 45);
+            oos.writeObject(person); // Write object to file
+            System.out.println("Serialized: " + person);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Deserialize the object
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            Person person = (Person) ois.readObject(); // Read object from file
+            System.out.println("Deserialized: " + person);
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+Here is an overview of key Java I/O classes in a tabular format, categorized by their functionality and typical use cases:
+<table><thead><tr><th><strong>Category</strong></th><th><strong>Class</strong></th><th><strong>Description</strong></th><th><strong>Typical Use Case</strong></th></tr></thead><tbody><tr><td><strong>Byte Stream</strong></td><td><code>InputStream</code></td><td>Abstract class for reading byte data from input sources.</td><td>Read binary data (files, network, etc.)</td></tr><tr><td></td><td><code>OutputStream</code></td><td>Abstract class for writing byte data to output sources.</td><td>Write binary data (files, network, etc.)</td></tr><tr><td></td><td><code>FileInputStream</code></td><td>Reads bytes from a file.</td><td>Reading data from a file</td></tr><tr><td></td><td><code>FileOutputStream</code></td><td>Writes bytes to a file.</td><td>Writing data to a file</td></tr><tr><td></td><td><code>BufferedInputStream</code></td><td>Buffered input stream for reading data more efficiently.</td><td>Improve performance by buffering read operations</td></tr><tr><td></td><td><code>BufferedOutputStream</code></td><td>Buffered output stream for writing data more efficiently.</td><td>Improve performance by buffering write operations</td></tr><tr><td></td><td><code>DataInputStream</code></td><td>Allows reading primitive data types in a machine-independent way.</td><td>Read primitive types like <code>int</code>, <code>double</code>, <code>boolean</code> from streams</td></tr><tr><td></td><td><code>DataOutputStream</code></td><td>Allows writing primitive data types in a machine-independent way.</td><td>Write primitive types like <code>int</code>, <code>double</code>, <code>boolean</code> to streams</td></tr><tr><td><strong>Character Stream</strong></td><td><code>Reader</code></td><td>Abstract class for reading character data from input sources.</td><td>Read character data (text files, etc.)</td></tr><tr><td></td><td><code>Writer</code></td><td>Abstract class for writing character data to output sources.</td><td>Write character data (text files, etc.)</td></tr><tr><td></td><td><code>FileReader</code></td><td>Reads characters from a file.</td><td>Reading characters from a file</td></tr><tr><td></td><td><code>FileWriter</code></td><td>Writes characters to a file.</td><td>Writing characters to a file</td></tr><tr><td></td><td><code>BufferedReader</code></td><td>Buffered character input stream for efficient reading.</td><td>Efficient reading of text data (line by line)</td></tr><tr><td></td><td><code>BufferedWriter</code></td><td>Buffered character output stream for efficient writing.</td><td>Efficient writing of text data (line by line)</td></tr><tr><td></td><td><code>PrintWriter</code></td><td>Prints formatted representations of objects to character streams.</td><td>Writing formatted text data (strings, numbers) to a file or console</td></tr><tr><td><strong>Object Stream</strong></td><td><code>ObjectInputStream</code></td><td>Reads Java objects from an input stream.</td><td>Deserialize Java objects from streams (e.g., for object persistence)</td></tr><tr><td></td><td><code>ObjectOutputStream</code></td><td>Writes Java objects to an output stream.</td><td>Serialize Java objects to streams (e.g., for object persistence or transmission)</td></tr><tr><td><strong>Piped Stream</strong></td><td><code>PipedInputStream</code></td><td>Allows reading from a piped input stream connected to a piped output stream.</td><td>Inter-thread communication via piped streams</td></tr><tr><td></td><td><code>PipedOutputStream</code></td><td>Allows writing to a piped output stream connected to a piped input stream.</td><td>Inter-thread communication via piped streams</td></tr><tr><td><strong>File I/O</strong></td><td><code>File</code></td><td>Represents a file or directory path in the filesystem.</td><td>Manipulate file/directory metadata, paths, and existence</td></tr><tr><td><strong>Serialization</strong></td><td><code>Serializable</code></td><td>Marker interface for objects that can be serialized (converted to a byte stream).</td><td>Mark objects to be serialized (written to and read from streams)</td></tr><tr><td></td><td><code>Externalizable</code></td><td>Extends <code>Serializable</code> to give more control over the serialization process (e.g., customize read/write behavior).</td><td>Custom serialization of objects</td></tr><tr><td><strong>Miscellaneous</strong></td><td><code>RandomAccessFile</code></td><td>Provides random access to a file (both reading and writing at specific positions).</td><td>Reading/writing files at random locations (seeking within files)</td></tr><tr><td></td><td><code>FileDescriptor</code></td><td>Represents the underlying file descriptor for a <code>RandomAccessFile</code> or other I/O streams.</td><td>Low-level access to file descriptors (mostly used with <code>RandomAccessFile</code>)</td></tr><tr><td><strong>Utility</strong></td><td><code>FileInputStream</code></td><td>Specialized input stream for reading bytes from a file.</td><td>Read byte data from a file</td></tr><tr><td></td><td><code>FileOutputStream</code></td><td>Specialized output stream for writing bytes to a file.</td><td>Write byte data to a file</td></tr></tbody></table>
