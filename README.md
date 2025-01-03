@@ -166,6 +166,106 @@ public class DurationExample {
 }
 ```
 
+### String class
+```java
+public class StringMethodsExample {
+    public static void main(String[] args) {
+        // 1. Length and Character Retrieval
+        String str = "Hello, World!";
+        System.out.println("Length: " + str.length()); // Length of the string
+        System.out.println("Character at index 1: " + str.charAt(1)); // Get character at index 1
+
+        // 2. String Comparison
+        System.out.println("Equals 'Hello, World!': " + str.equals("Hello, World!")); // Case-sensitive comparison
+        System.out.println("EqualsIgnoreCase 'hello, world!': " + str.equalsIgnoreCase("hello, world!")); // Case-insensitive
+        System.out.println("CompareTo 'Hello, Universe!': " + str.compareTo("Hello, Universe!")); // Lexicographical comparison
+
+        // 3. Substring and Splitting
+        System.out.println("Substring from index 7: " + str.substring(7)); // Substring from index
+        System.out.println("Substring (7, 12): " + str.substring(7, 12)); // Substring between indices
+        String[] splitStr = "A,B,C".split(","); // Split by comma
+        System.out.println("Split result: " + String.join(" | ", splitStr)); // Join split results
+
+        // 4. Search
+        System.out.println("Index of 'World': " + str.indexOf("World")); // First occurrence
+        System.out.println("Last index of 'o': " + str.lastIndexOf("o")); // Last occurrence
+        System.out.println("Contains 'World': " + str.contains("World")); // Check if contains substring
+
+        // 5. Case Conversion
+        System.out.println("To Uppercase: " + str.toUpperCase()); // Convert to uppercase
+        System.out.println("To Lowercase: " + str.toLowerCase()); // Convert to lowercase
+
+        // 6. Trimming and Replacing
+        String paddedStr = "  Hello  ";
+        System.out.println("Trimmed string: " + paddedStr.trim()); // Remove leading/trailing spaces
+        System.out.println("Replace 'l' with 'p': " + str.replace('l', 'p')); // Replace character
+        System.out.println("Replace 'World' with 'Java': " + str.replace("World", "Java")); // Replace substring
+
+        // 7. String Joining
+        System.out.println("Concatenated string: " + str.concat(" How are you?")); // Concatenation
+        System.out.println("Joined string: " + String.join(", ", "Apple", "Banana", "Cherry")); // Join strings
+
+        // 8. Checking String Properties
+        System.out.println("Is Empty: " + "".isEmpty()); // Check if string is empty
+        System.out.println("Is Blank (Java 11+): " + "   ".isBlank()); // Check if blank (spaces only)
+        System.out.println("Starts with 'Hello': " + str.startsWith("Hello")); // Check prefix
+        System.out.println("Ends with '!': " + str.endsWith("!")); // Check suffix
+
+        // 9. Conversion
+        char[] chars = str.toCharArray(); // Convert to character array
+        System.out.println("First character of char array: " + chars[0]);
+        System.out.println("Value of 123: " + String.valueOf(123)); // Convert value to string
+
+        // 10. Regular Expressions
+        String regexStr = "abc123";
+        System.out.println("Matches regex '\\w+': " + regexStr.matches("\\w+")); // Check regex match
+        System.out.println("ReplaceAll '\\d' with '#': " + regexStr.replaceAll("\\d", "#")); // Replace digits with #
+
+        // Example output
+        System.out.println("Final String: " + str);
+    }
+}
+```
+
+Output
+```bash
+Length: 13
+Character at index 1: e
+Equals 'Hello, World!': true
+EqualsIgnoreCase 'hello, world!': true
+CompareTo 'Hello, Universe!': 2
+Substring from index 7: World!
+Substring (7, 12): World
+Split result: A | B | C
+Index of 'World': 7
+Last index of 'o': 8
+Contains 'World': true
+To Uppercase: HELLO, WORLD!
+To Lowercase: hello, world!
+Trimmed string: Hello
+Replace 'l' with 'p': Heppo, Worpd!
+Replace 'World' with 'Java': Hello, Java!
+Concatenated string: Hello, World! How are you?
+Joined string: Apple, Banana, Cherry
+Is Empty: true
+Is Blank (Java 11+): true
+Starts with 'Hello': true
+Ends with '!': true
+First character of char array: H
+Value of 123: 123
+Matches regex '\w+': true
+ReplaceAll '\d' with '#': abc###
+Final String: Hello, World!
+```
+
+### equals vs "=="
+The difference between equals() and == in Java for comparing String objects lies in what they compare:
+
+equals(): Compares the contents (character sequence) of two strings.<br>
+Behavior: Checks if the actual values (characters in the string) are the same, regardless of whether the objects are stored at different memory locations.<br>
+
+==: Compares the references (memory addresses) of two objects. Does not compare the actual content of the strings.
+
 ## PROGRAM FLOW
 
 ### For...Each
